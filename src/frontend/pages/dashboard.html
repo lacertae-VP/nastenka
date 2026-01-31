@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="../obr/icon.png">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ovládací panel</title>
+
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+
+  
+<style>
+ 
+
+  .dash-wrap{
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 22px 16px 70px;
+  }
+
+  .dash-top{
+    background: rgba(255,255,255,.75);
+    border: 1px solid rgba(226,232,240,.8);
+    border-radius: 18px;
+    padding: 18px 18px;
+    box-shadow: 0 18px 50px rgba(15,23,42,.08);
+    backdrop-filter: blur(10px);
+
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-bottom: 16px;
+  }
+
+  .dash-top h2{
+    margin:0 0 6px;
+    font-size: 30px;
+    font-weight: 950;
+    letter-spacing: -.03em;
+  }
+
+  .dash-top p{
+    margin:0;
+    color: rgba(15,23,42,.72);
+    line-height: 1.45;
+    max-width: 840px;
+  }
+
+  .dash-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
+  .btn{
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(203,213,225,.9);
+    background: rgba(255,255,255,.9);
+    cursor:pointer;
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  .btn:hover{ transform: translateY(-1px); box-shadow: 0 14px 30px rgba(15,23,42,.12); }
+  .btn:active{ transform: translateY(0); box-shadow:none; }
+
+  .btn-primary{
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-color: rgba(37,99,235,.6);
+    color:#fff;
+  }
+  .btn-danger{
+    background: linear-gradient(135deg, #b91c1c, #991b1b);
+    border-color: rgba(185,28,28,.55);
+    color:#fff;
+  }
+
+
+  .dash-wrap > h2{
+    margin: 0;
+    font-size: 0; 
+  }
+ 
+  #upcomingEvents, #pastEvents{
+    background: rgba(255,255,255,.85);
+    border: 1px solid rgba(226,232,240,.85);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 18px 50px rgba(15,23,42,.08);
+    margin: 0 0 18px;
+    position: relative;
+    overflow:hidden;
+  }
+  #upcomingEvents::before, #pastEvents::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: radial-gradient(800px 140px at 10% 0%, rgba(37,99,235,.10), transparent 55%);
+    pointer-events:none;
+  }
+
+  #upcomingEvents::after{
+    content:"Nadchádzajúce udalosti";
+    position:absolute;
+    top: 12px;
+    left: 14px;
+    font-weight: 950;
+    letter-spacing: -.02em;
+    color:#0f172a;
+  }
+  #pastEvents::after{
+    content:"Minulé udalosti";
+    position:absolute;
+    top: 12px;
+    left: 14px;
+    font-weight: 950;
+    letter-spacing: -.02em;
+    color:#0f172a;
+  }
+
+  #upcomingEvents, #pastEvents{ padding-top: 46px; }
+
+  .events-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .event-card{
+    background: rgba(255,255,255,.92);
+    border: 1px solid rgba(226,232,240,.9);
+    border-radius: 16px;
+    padding: 14px;
+    cursor:pointer;
+    box-shadow: 0 10px 24px rgba(15,23,42,.08);
+    transition: transform .12s ease, box-shadow .12s ease;
+    overflow:hidden;
+    position: relative;
+  }
+  .event-card:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px rgba(15,23,42,.14);
+  }
+  .event-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: radial-gradient(700px 140px at 20% 0%, rgba(16,185,129,.08), transparent 60%);
+    pointer-events:none;
+  }
+
+  .event-title{
+    font-size: 18px;
+    font-weight: 950;
+    letter-spacing: -.01em;
+    margin: 0 0 6px;
+    position:relative;
+    z-index:1;
+  }
+
+  .event-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    font-size: 13px;
+    color: rgba(15,23,42,.72);
+    position:relative;
+    z-index:1;
+  }
+
+  .event-meta > *{
+    background: rgba(241,245,249,.9);
+    border: 1px solid rgba(226,232,240,.8);
+    padding: 4px 8px;
+    border-radius: 999px;
+  }
+
+  .event-desc{
+    margin-top: 10px;
+    color: rgba(15,23,42,.85);
+    line-height: 1.35;
+    white-space: pre-wrap;
+    position:relative;
+    z-index:1;
+  }
+
+  .empty-state{
+    background: rgba(255,255,255,.7);
+    border: 1px dashed rgba(148,163,184,.8);
+    border-radius: 14px;
+    padding: 14px;
+    color: rgba(15,23,42,.72);
+    position: relative;
+    z-index: 1;
+  }
+
+
+  .dash-modal-backdrop{
+    position: fixed;
+    inset: 0;
+    background: rgba(2,6,23,.65);
+    backdrop-filter: blur(8px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding: 18px;
+    z-index:9999;
+  }
+  .dash-modal-backdrop.show{ display:flex; }
+
+  .dash-modal{
+    width: min(980px, 100%);
+    max-height: 86vh;
+    overflow:auto;
+    border-radius: 20px;
+    padding: 18px 18px 20px;
+    background: rgba(255,255,255,.92);
+    border: 1px solid rgba(226,232,240,.9);
+    box-shadow: 0 28px 90px rgba(0,0,0,.35);
+    backdrop-filter: blur(10px);
+    position: relative;
+  }
+
+  .dash-close{
+    position:absolute;
+    top: 14px;
+    right: 14px;
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    border: 1px solid rgba(226,232,240,.9);
+    background: rgba(255,255,255,.9);
+    cursor:pointer;
+    font-size: 22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .dash-close:hover{ transform: translateY(-1px); box-shadow: 0 14px 30px rgba(15,23,42,.14); }
+
+  .dash-h1{
+    margin: 2px 56px 6px 0;
+    font-size: 30px;
+    font-weight: 950;
+    letter-spacing: -.03em;
+  }
+  .dash-sub{
+    margin:0 0 12px;
+    color: rgba(15,23,42,.72);
+  }
+
+  .dash-divider{ height:1px; background: rgba(226,232,240,.9); margin: 18px 0; }
+
+  .dash-boxes{
+    display:grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+  @media (max-width: 900px){ .dash-boxes{ grid-template-columns: 1fr; } }
+
+  .dash-box{
+    background: rgba(248,250,252,.85);
+    border: 1px solid rgba(226,232,240,.9);
+    border-radius: 16px;
+    padding: 14px;
+    overflow:hidden;
+  }
+  .dash-box h3{
+    margin:0 0 10px;
+    font-size: 16px;
+    font-weight: 950;
+    letter-spacing: -.01em;
+  }
+
+ 
+  .dash-box ul{
+    margin:0;
+    padding:0;
+    list-style:none;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .dash-box li{
+    display:inline-flex;
+    align-items:center;
+    max-width: 100%;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.9);
+    border: 1px solid rgba(226,232,240,.9);
+    font-size: 13px;
+    color: rgba(15,23,42,.82);
+    overflow-wrap:anywhere;
+    word-break: break-word;
+  }
+ 
+
+ 
+body.page-dashboard{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body.page-dashboard main{
+  flex: 1; 
+}
+
+
+.footer{
+  background: linear-gradient(
+    135deg,
+    rgba(15,23,42,.95),
+    rgba(30,41,59,.95)
+  );
+  color: rgba(255,255,255,.85);
+  text-align: center;
+  padding: 14px 16px;
+  font-size: 14px;
+  letter-spacing: .02em;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+
+.footer{
+  backdrop-filter: blur(6px);
+}
+
+
+.footer::before{
+  content:"";
+  display:block;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.25),
+    transparent
+  );
+  margin-bottom: 10px;
+}
+
+
+  
+  .dash-form{ display:none; margin-top: 14px; }
+  .dash-form.show{ display:block; }
+
+  .grid2{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 900px){ .grid2{ grid-template-columns:1fr; } }
+
+  .field label{
+    display:block;
+    font-weight: 900;
+    margin-bottom: 6px;
+    color:#0f172a;
+  }
+
+  .field input, .field textarea, .field select{
+    width: 100%;
+    box-sizing:border-box;
+    border: 1px solid rgba(203,213,225,.95);
+    border-radius: 14px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,.95);
+    outline:none;
+    transition: box-shadow .12s ease, border-color .12s ease;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{
+    border-color: rgba(37,99,235,.55);
+    box-shadow: 0 0 0 4px rgba(37,99,235,.14);
+  }
+
+  .field textarea{ min-height: 120px; resize: vertical; }
+  .hint{ opacity:.82; margin-top: 6px; font-size: 13px; line-height: 1.35; }
+
+  #fClasses, #fTeachers{ min-height: 170px; padding: 10px; }
+
+
+  section{
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 16px 55px;
+  }
+  section > h2{
+    margin: 10px 0 8px;
+    font-weight: 950;
+    letter-spacing: -.02em;
+  }
+</style>
+
+</head>
+
+<body class="page-dashboard">
+
+  <header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href="../index.html">
+      <img src="../obr/icon.png" alt="Logo školy" class="logo">
+      <span class="brand__dot"></span>
+      <span class="brand__text">Školská nástenka</span>
+    </a>
+
+    <nav class="nav">
+      <a class="nav__link" href="../index.html">Domov</a>
+      <a class="nav__link" href="../pages/events.html">Udalosti</a>
+      <a class="nav__link" href="../pages/students.html">Študenti</a>
+      <a class="nav__link" href="../pages/teachers.html">Učitelia</a>
+      
+    </nav>
+  </div>
+</header>
+
+
+  <main class="dash-wrap">
+    <div class="dash-top">
+      <div>
+        <h2>Ovládací panel</h2>
+        <p> </p>
+      </div>
+      <div class="dash-actions">
+        <button class="btn btn-primary" id="btnNew">+ Nová udalosť</button>
+        <button class="btn" id="btnRefresh">Obnoviť</button>
+      </div>
+    </div>
+
+    <h2>Nadchádzajúce udalosti</h2>
+    <div id="upcomingEvents" class="events-grid"></div>
+
+    <h2>Minulé udalosti</h2>
+    <div id="pastEvents" class="events-grid"></div>
+  </main>
+
+  <!-- modal -->
+  <div id="dashBackdrop" class="dash-modal-backdrop">
+    <div class="dash-modal" role="dialog" aria-modal="true">
+      <button class="dash-close" id="dashClose" aria-label="Zavrieť">×</button>
+
+      
+      <div id="viewPanel">
+        <div class="dash-h1" id="mTitle">—</div>
+        <div class="dash-sub" id="mMeta">—</div>
+
+        <div style="margin-top:10px;">
+          <div style="font-weight:800; font-size:18px; margin-bottom:6px;">Popis</div>
+          <div id="mDesc" style="white-space:pre-wrap;">—</div>
+        </div>
+
+        <div class="dash-boxes">
+          <div class="dash-box">
+            <h3>Triedy</h3>
+            <ul id="mClasses"><li>—</li></ul>
+          </div>
+          <div class="dash-box">
+            <h3>Učitelia</h3>
+            <ul id="mTeachers"><li>—</li></ul>
+          </div>
+          
+        </div>
+
+        <div class="dash-footer">
+          <button class="btn" id="btnEdit">Upraviť</button>
+          <button class="btn btn-danger" id="btnDelete">Vymazať</button>
+          <button class="btn" id="btnClose2">Zavrieť</button>
+        </div>
+      </div>
+
+      <div class="dash-divider"></div>
+
+      <!-- edit  -->
+      <div id="formPanel" class="dash-form">
+        <h2 id="formHeading">Upraviť udalosť</h2>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="fTitle">Názov</label>
+            <input id="fTitle" type="text" placeholder="Názov udalosti" />
+          </div>
+          <div class="field">
+            <label for="fPlace">Miesto (voliteľné)</label>
+            <input id="fPlace" type="text" placeholder="Miesto (voliteľné)" />
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="fDate">Dátum</label>
+            <input id="fDate" type="date" />
+          </div>
+          <div class="field">
+            <label for="fTime">Čas (voliteľné)</label>
+            <input id="fTime" type="time" />
+            
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="fDesc">Popis (voliteľné)</label>
+          <textarea id="fDesc" placeholder="Popis..."></textarea>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="fClasses">Triedy (vyber viac)</label>
+            <select id="fClasses" multiple size="6"></select>
+            
+          </div>
+          <div class="field">
+            <label for="fTeachers">Učitelia (vyber viac)</label>
+            <select id="fTeachers" multiple size="6"></select>
+            <div class="hint">Môžu byť všetci.</div>
+          </div>
+        </div>
+
+        <div class="dash-footer">
+          <button class="btn btn-primary" id="btnSave">Uložiť</button>
+          <button class="btn" id="btnCancel">Zrušiť</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<section style="margin-top:-30px;">
+  <h2>Študenti</h2>
+  <p style="opacity:.85;margin-top:6px;">
+    
+  </p>
+<div class="students-layout">
+
+    <input id="studentSearch" type="search" placeholder="Hľadať meno alebo triedu..."
+           style="padding:10px 14px;border:1px solid #d1d5db;border-radius:999px;min-width:260px;">
+  </div>
+
+  <div style="display:grid; grid-template-columns: 2fr 2fr; gap:14px;">
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:14px;">
+      <h3 style="margin-top:0;">Pridať študenta</h3>
+
+      <div style="display:grid; gap:10px;">
+        <input id="studentName" type="text" placeholder="Meno študenta"
+               style="padding:10px 12px;border:1px solid #d1d5db;border-radius:12px;">
+        <input id="studentClass" type="text" placeholder="Trieda (napr. 2.A)"
+               style="padding:10px 12px;border:1px solid #d1d5db;border-radius:12px;">
+        <button id="btnAddStudent"
+                style="padding:10px 14px;border-radius:14px;border:1px solid #2563eb;background:#2563eb;color:#fff;cursor:pointer;">
+          Pridať
+        </button>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:14px;">
+      <h3 style="margin-top:0;">Zoznam študentov</h3>
+      <div id="studentsCount" style="opacity:.8; margin-bottom:10px;">—</div>
+
+      <div style="max-height:340px; overflow:auto; border:1px solid #e5e7eb; border-radius:14px;">
+        <table style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr style="background:#f7f7f8;">
+              <th style="text-align:left;padding:10px;">Meno</th>
+              <th style="text-align:left;padding:10px;">Trieda</th>
+              <th style="text-align:right;padding:10px;">Akcia</th>
+            </tr>
+          </thead>
+          <tbody id="studentsTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="footer-left">
+      <div class="footer-title">Školská nástenka</div>
+      <div class="footer-sub">SOČ • Vadym Petriuk</div>
+    </div>
+
+    <div class="footer-right">
+      <span>© <span id="year"></span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+
+  const y = document.getElementById("year");
+  if (y) y.textContent = new Date().getFullYear();
+</script>
+
+
+  <script src="../js/api.js"></script>
+  <script src="../js/dashboard.js"></script>
+  
+</body>
+</html>

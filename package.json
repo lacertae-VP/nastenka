@@ -1,0 +1,30 @@
+{
+  "name": "school-notice-board",
+  "version": "1.0.0",
+  "description": "A notice board for school events, students, and teachers.",
+  "main": "src/backend/app.js",
+  "scripts": {
+    "start": "node src/backend/server.js",
+    "dev": "nodemon src/backend/server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.9",
+    "mysql2": "^3.15.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "keywords": [
+    "school",
+    "notice board",
+    "events",
+    "students",
+    "teachers"
+  ],
+  "author": "Your Name",
+  "license": "ISC"
+}
