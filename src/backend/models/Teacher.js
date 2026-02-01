@@ -15,7 +15,7 @@ class Teacher {
   static async create({ name, subject}) {
     const [result] = await db.execute(
       'INSERT INTO Teachers (name, subject) VALUES (?, ?, ?)',
-      [name, email, subject]
+      [name, subject]
     );
     return result.insertId;
   }
@@ -23,7 +23,7 @@ class Teacher {
   static async update(id, { name, subject}) {
     const [result] = await db.execute(
       'UPDATE Teachers SET name = ?, subject = ? WHERE id = ?',
-      [name, email, subject, id]
+      [name, subject, id]
     );
     return result.affectedRows > 0;
   }
